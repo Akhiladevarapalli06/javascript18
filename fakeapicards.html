@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Food Cards</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: scale(1.05);
+    }
+    .card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+    .card-content {
+      padding: 15px;
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 0 0 10px;
+    }
+    .card-description {
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>Food Cards</h1>
+  <div class="container" id="food-cards"></div>
+
+  <script>
+
+let API_URL = 'https://www.themealdb.com/api/json/v1/1/search.php?s=';
+let foodCardsContainer = document.getElementById('food-cards');
+async function fetchFoodData() {
+  try {
+    let response = await fetch(API_URL);
+    let data = await response.json();
+    if (data && data.meals) {
+      displayFoodCards(data.meals);
+    } else {
+      foodCardsContainer.innerHTML = '<p>No food data found.</p>';
+    }
+  } catch (error) {
+    console.error('Error fetching food data:', error);
+    foodCardsContainer.innerHTML = '<p>Error loading food data. Please try again later.</p>';
+  }
+}
+
+function displayFoodCards(meals) {
+  let foodCardsHTML = meals.map(meal => `
+    <div class="card">
+      <img src="${meal.strMealThumb}" alt="${meal.strMeal}">
+      <div class="card-content">
+        <h2 class="card-title">${meal.strMeal}</h2>
+        <p class="card-description">${meal.strCategory} | ${meal.strArea}</p>
+      </div>
+    </div>
+  `).join('');
+  foodCardsContainer.innerHTML = foodCardsHTML;
+}
+fetchFoodData();
+
+  </script>
+</body>
+</html>
